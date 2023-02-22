@@ -600,11 +600,13 @@ int16_t SX126x::startReceiveDutyCycleAuto(uint16_t senderPreambleLength, uint16_
 
 int16_t SX126x::startReceiveCommon(uint32_t timeout) {
   // set DIO mapping
-  uint16_t mask = RADIOLIB_SX126X_IRQ_RX_DONE;
+  uint16_t dio1Mask = RADIOLIB_SX126X_IRQ_RX_DONE;
   if(timeout != RADIOLIB_SX126X_RX_TIMEOUT_INF) {
-    mask |= RADIOLIB_SX126X_IRQ_TIMEOUT;
+    dio1Mask |= RADIOLIB_SX126X_IRQ_TIMEOUT;
   }
-  int16_t state = setDioIrqParams(RADIOLIB_SX126X_IRQ_RX_DONE | RADIOLIB_SX126X_IRQ_TIMEOUT | RADIOLIB_SX126X_IRQ_CRC_ERR | RADIOLIB_SX126X_IRQ_HEADER_ERR, mask);
+  uint16_t irqMask = RADIOLIB_SX126X_IRQ_RX_DONE | RADIOLIB_SX126X_IRQ_TIMEOUT | RADIOLIB_SX126X_IRQ_CRC_ERR | RADIOLIB_SX126X_IRQ_HEADER_ERR;
+  irqMask |= RADIOLIB_SX126X_IRQ_SYNC_WORD_VALID;
+  int16_t state = setDioIrqParams(irqMask, dio1Mask);
   RADIOLIB_ASSERT(state);
 
   // set buffer pointers
