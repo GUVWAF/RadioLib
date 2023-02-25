@@ -352,7 +352,7 @@ int16_t SX128x::receive(uint8_t* data, size_t len) {
 
   // start reception
   uint32_t timeoutValue = (uint32_t)((float)timeout / 15.625);
-  state = startReceive(timeoutValue);
+  state = startReceive(timeoutValue, false);
   RADIOLIB_ASSERT(state);
 
   // wait for packet reception or timeout
@@ -546,20 +546,26 @@ int16_t SX128x::finishTransmit() {
   return(standby());
 }
 
-int16_t SX128x::startReceive(uint16_t timeout) {
+int16_t SX128x::startReceive(uint16_t timeout, bool setIrqAll) {
   // check active modem
   if(getPacketType() == RADIOLIB_SX128X_PACKET_TYPE_RANGING) {
     return(RADIOLIB_ERR_WRONG_MODEM);
   }
 
   // set DIO mapping
-  uint16_t mask = RADIOLIB_SX128X_IRQ_RX_DONE;
+  uint16_t dio1Mask = RADIOLIB_SX128X_IRQ_RX_DONE;
 
   if(timeout != RADIOLIB_SX128X_RX_TIMEOUT_INF) {
-    mask |= RADIOLIB_SX128X_IRQ_RX_TX_TIMEOUT;
+    dio1Mask |= RADIOLIB_SX128X_IRQ_RX_TX_TIMEOUT;
   }
 
-  int16_t state = setDioIrqParams(RADIOLIB_SX128X_IRQ_RX_DONE | RADIOLIB_SX128X_IRQ_RX_TX_TIMEOUT | RADIOLIB_SX128X_IRQ_CRC_ERROR | RADIOLIB_SX128X_IRQ_HEADER_ERROR, mask);
+  uint16_t irqMask = RADIOLIB_SX128X_IRQ_RX_DONE | RADIOLIB_SX128X_IRQ_RX_TX_TIMEOUT | RADIOLIB_SX128X_IRQ_CRC_ERROR | RADIOLIB_SX128X_IRQ_HEADER_ERROR;
+
+  if(setIrqAll) {
+    irqMask = RADIOLIB_SX128X_IRQ_ALL;
+  }
+
+  int16_t state = setDioIrqParams(irqMask, dio1Mask);
   RADIOLIB_ASSERT(state);
 
   // set buffer pointers

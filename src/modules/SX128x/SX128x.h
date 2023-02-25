@@ -566,9 +566,11 @@ class SX128x: public PhysicalLayer {
       \param timeout Raw timeout value, expressed as multiples of 15.625 us. Defaults to RADIOLIB_SX128X_RX_TIMEOUT_INF for infinite timeout (Rx continuous mode), set to RADIOLIB_SX128X_RX_TIMEOUT_NONE for no timeout (Rx single mode).
       If timeout other than infinite is set, signal will be generated on DIO1.
 
+      \param setIrqAll Whether to set all IRQ flags (true), or only those necessary to receive a complete packet (false). Defaults to true.
+
       \returns \ref status_codes
     */
-    int16_t startReceive(uint16_t timeout = RADIOLIB_SX128X_RX_TIMEOUT_INF);
+    int16_t startReceive(uint16_t timeout = RADIOLIB_SX128X_RX_TIMEOUT_INF, bool setIrqAll = true);
 
     /*!
       \brief Reads the current IRQ status.
