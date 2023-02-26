@@ -921,10 +921,10 @@
  *         verbose - full transcript of all SPI communication
  */
 #if !defined(RADIOLIB_DEBUG)
-  //#define RADIOLIB_DEBUG
+  #define RADIOLIB_DEBUG
 #endif
 #if !defined(RADIOLIB_VERBOSE)
-  //#define RADIOLIB_VERBOSE
+  #define RADIOLIB_VERBOSE
 #endif
 
 // set which output port should be used for debug output
